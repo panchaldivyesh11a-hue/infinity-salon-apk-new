@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INFINITY Salon Bill Maker</title>
+<style>
+:root{--ink:#302b29;--gold:#b89a61;--cream:#f6f1e9;--muted:#71675e;--line:#ded4c5}
+*{box-sizing:border-box}
+body{margin:0;background:#f0ece6;color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+.app{max-width:980px;margin:22px auto;padding:16px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
+button{border:0;border-radius:8px;padding:12px 16px;font-weight:700;cursor:pointer}
+.primary{background:var(--ink);color:#fff}.secondary{background:var(--gold);color:#fff}.plain{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.notice{text-align:center;color:var(--muted);font-size:13px;margin:0 0 14px}
+.sheet{background:#fff;max-width:720px;margin:auto;padding:28px 34px;box-shadow:0 8px 30px #302b2917;border-top:5px solid var(--gold);min-height:940px;display:flex;flex-direction:column}
+.brand{text-align:center;margin:0;font-family:Georgia,serif;font-size:32px;letter-spacing:2px}
+.subbrand{text-align:center;color:var(--gold);font-weight:700;font-size:12px;letter-spacing:2px;margin:6px 0 18px}
+.rule{height:1px;background:var(--gold);margin-bottom:18px}
+.billtitle{text-align:center;font-family:Georgia,serif;font-size:22px;margin:0}
+.tagline{text-align:center;color:var(--muted);font-size:12px;font-style:italic;margin:7px 0 22px}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+label{display:block;font-size:10px;letter-spacing:1px;font-weight:700;color:var(--gold);margin-bottom:5px}
+input{font:inherit;color:var(--ink);border:0;border-bottom:1px solid var(--line);padding:7px 2px;width:100%;background:transparent;outline-color:var(--gold)}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+thead{background:var(--ink);color:#fff}
+th{font-size:11px;text-align:left;padding:11px 9px;letter-spacing:.4px}
+th:first-child,td:first-child{width:48px;text-align:center}
+th:last-child,td:last-child{width:36px;text-align:center}
+th:nth-child(3),td:nth-child(3){width:94px;text-align:right}
+th:nth-child(4),td:nth-child(4){width:112px;text-align:center}
+th:nth-child(5),td:nth-child(5){width:94px;text-align:right}
+td{padding:5px 8px;border-bottom:1px solid var(--line);height:39px}
+tbody tr:nth-child(even){background:var(--cream)}
+td input,td select{border:0;padding:7px 2px;background:transparent;width:100%;font:inherit;color:var(--ink)}
+td.amount input{text-align:right;display:block;width:100%;min-width:0}td.net{text-align:right;white-space:nowrap}
+td.discount-cell{display:flex;align-items:center;gap:3px}
+td.discount-cell .percent-sign{flex:0 0 18px;text-align:center;font-size:12px;font-weight:700;color:var(--muted)}
+td.discount-cell input{text-align:right;min-width:0;flex:1;width:1%;}
+.remove{width:26px;height:26px;padding:0;background:#f2e8e1;color:#80574c;border-radius:5px}
+.summary{width:310px;max-width:100%;margin:18px 0 0 auto}
+.sumrow{display:flex;justify-content:space-between;align-items:center;padding:9px 10px;border-bottom:1px solid var(--line);gap:12px}
+.sumrow label{margin:0;color:var(--muted);font-size:11px}
+.sumrow input{max-width:130px;text-align:right}
+.total{background:var(--ink);color:#fff;margin-top:8px;font-weight:700;font-size:16px;padding:13px 12px}
+.total label{color:#fff;font-size:12px}
+.footer{text-align:center;margin-top:24px;padding-top:0}
+.thanks{font-family:Georgia,serif;color:var(--gold);font-weight:700;letter-spacing:.5px}
+.footnote{font-size:11px;color:var(--muted);font-style:italic;margin-top:7px}
+.bottomtools{display:flex;justify-content:center;gap:8px;margin-top:12px}
+.small{font-size:12px;color:var(--muted);text-align:center;margin-top:14px}
+@media(max-width:600px){.app{padding:8px;margin:8px auto}.sheet{padding:20px 10px}.brand{font-size:27px}.meta{gap:8px}th{font-size:9px;padding:8px 3px}td{padding:4px 3px;font-size:11px}th:first-child,td:first-child{width:25px}th:nth-child(2),td:nth-child(2){min-width:80px}th:nth-child(3),td:nth-child(3){width:70px}th:nth-child(4),td:nth-child(4){width:82px}th:nth-child(5),td:nth-child(5){width:72px}td.discount-cell .percent-sign{flex-basis:15px;font-size:10px}td input,td select{font-size:11px}.summary{width:100%}button{padding:11px 12px}}
+@media print{
+ @page{size:A4 portrait;margin:9mm}
+ body{background:#fff}
+ .app{max-width:none;margin:0;padding:0}
+ .toolbar,.notice,.bottomtools,.remove-col,.small{display:none!important}
+ .sheet{max-width:none;width:100%;min-height:0;height:279mm;padding:7mm 8mm;box-shadow:none;border-top:3px solid var(--gold);display:flex;flex-direction:column}
+ .brand{font-size:25px}.subbrand{margin:3px 0 10px;font-size:10px}
+ .rule{margin-bottom:10px}.billtitle{font-size:18px}.tagline{margin:4px 0 12px}
+ .meta{margin-bottom:11px;gap:10px}
+ th{padding:6px 4px;font-size:9px}td{padding:2px 4px;height:9mm} tbody tr{height:9mm}
+ td input,td select{padding:3px 0;font-size:9px}td.discount-cell .percent-sign{flex-basis:15px;font-size:9px}td.discount-cell input{flex:1;width:1%;}
+ .summary{margin-top:12mm;width:270px}
+ .sumrow{padding:5px 8px}.total{padding:9px 8px;margin-top:5px}
+ .footer{margin-top:10mm;padding-top:0}.footnote{margin-top:4px}
+ input{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+ thead, .total, .rule{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="toolbar">
+    <button class="primary" onclick="addRow()">＋ Add service</button>
+    <button class="secondary" onclick="savePDF()">Download PDF</button>
+    <button class="primary" onclick="exportExcel()">Download Excel (.xlsx)</button>
+    <button class="plain" onclick="resetBill()">New bill / Clear</button>
+  </div>
+  <p class="notice">Fill in the client and services below. Totals update automatically. PDF prints on one A4 page.</p>
+  <main class="sheet" id="bill">
+    <h1 class="brand">INFINITY</h1>
+    <div class="subbrand">HAIR &amp; TRIM SALON</div>
+    <div class="rule"></div>
+    <h2 class="billtitle">SERVICE BILL</h2>
+    <div class="tagline">A little luxury, just for you</div>
+    <section class="meta">
+      <div><label for="client">CLIENT NAME</label><input id="client" placeholder="Enter client name"></div>
+      <div><label for="billdateDisplay">DATE (DD/MM/YYYY)</label><input id="billdateDisplay" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" aria-label="Date in DD/MM/YYYY format" maxlength="10"></div>
+    </section>
+    <table>
+      <thead><tr><th>NO.</th><th>SERVICE DESCRIPTION</th><th>PRICE (₹)</th><th>DISCOUNT</th><th>NET (₹)</th><th class="remove-col"></th></tr></thead>
+      <tbody id="serviceRows"></tbody>
+    </table>
+    <div class="bottomtools"><button class="plain" onclick="addRow()">＋ Add another service</button></div>
+    <section class="summary">
+      <div class="sumrow"><label>SUBTOTAL</label><strong id="subtotal">₹0.00</strong></div>
+      <div class="sumrow"><label>TOTAL DISCOUNT</label><strong id="totalDiscount">₹0.00</strong></div>
+      <div class="sumrow total"><label>TOTAL AMOUNT</label><strong id="total">₹0.00</strong></div>
+    </section>
+    <footer class="footer">
+      <div class="thanks">THANK YOU FOR CHOOSING INFINITY</div>
+      <div class="footnote">We look forward to welcoming you again.</div>
+    </footer>
+  </main>
+  <p class="small">Excel export needs an internet connection for the spreadsheet library. PDF downloads directly; internet is required for PDF and Excel libraries.</p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+const tbody=document.getElementById('serviceRows');
+const currency=n=>'₹'+(Number(n)||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+function addRow(name='',amount=''){
+ const tr=document.createElement('tr');
+ tr.innerHTML=`<td class="rownum"></td><td><input class="service" aria-label="Service description" placeholder="Service name" value="${String(name).replace(/"/g,'&quot;')}"></td><td class="amount"><input class="price" aria-label="Price in rupees" type="number" min="0" step="0.01" placeholder="0.00" value="${amount}"></td><td class="discount-cell"><span class="percent-sign" aria-hidden="true">%</span><input class="discountValue" aria-label="Discount percent" type="number" min="0" max="100" step="0.01" placeholder="0" value="0"></td><td class="net">₹0.00</td><td class="remove-col"><button class="remove" title="Remove service" onclick="this.closest('tr').remove();renumber();calculate()">×</button></td>`;
+ tbody.appendChild(tr);
+ tr.querySelectorAll('input,select').forEach(i=>i.addEventListener('input',()=>{
+   if(i.classList.contains('discountValue') && Number(i.value)>100) i.value='100';
+   calculate();
+ }));
+ renumber();calculate();
+}
+function renumber(){[...tbody.rows].forEach((r,i)=>r.querySelector('.rownum').textContent=i+1)}
+function rowAmounts(r){
+ const price=Math.max(0,Number(r.querySelector('.price').value)||0);
+ const val=Math.max(0,Number(r.querySelector('.discountValue').value)||0);
+ const percent=Math.min(100,val);
+ const discount=price*percent/100;
+ return {price,discount,net:Math.max(0,price-discount),type:'%',val:percent};
+}
+function calculate(){
+ let subtotal=0,totalDiscount=0,total=0;
+ [...tbody.rows].forEach(r=>{const a=rowAmounts(r);subtotal+=a.price;totalDiscount+=a.discount;total+=a.net;r.querySelector('.net').textContent=currency(a.net)});
+ document.getElementById('subtotal').textContent=currency(subtotal);
+ document.getElementById('totalDiscount').textContent=currency(totalDiscount);
+ document.getElementById('total').textContent=currency(total);
+}
+async function savePDF(){
+  if(typeof html2pdf === 'undefined'){
+    alert('PDF download library load nathi thai. Internet connect kari ne aa HTML file fari kholo. Print dialog khule to cancel karo; aa button thi direct PDF download thavu joie.');
+    return;
+  }
+  const bill=document.getElementById('bill');
+  const options={
+    margin:[7,8,7,8],
+    filename:'INFINITY_Client_Bill.pdf',
+    image:{type:'jpeg',quality:0.98},
+    html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff',scrollY:0},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+    pagebreak:{mode:['css','legacy'],avoid:['tr','.summary','.footer']}
+  };
+  try {
+    const clone=bill.cloneNode(true);
+    clone.style.width='194mm'; clone.style.maxWidth='194mm'; clone.style.minHeight='0';
+    clone.style.height='auto'; clone.style.padding='7mm 8mm'; clone.style.margin='0';
+    clone.style.boxShadow='none'; clone.style.borderTop='3px solid #b89a61';
+    // cloneNode does not copy live input values; sync them before making a printable copy.
+    const originalInputs=bill.querySelectorAll('input');
+    const clonedInputs=clone.querySelectorAll('input');
+    originalInputs.forEach((el,i)=>{ if(clonedInputs[i]) clonedInputs[i].value=el.value; });
+    const originalSelects=bill.querySelectorAll('select');
+    const clonedSelects=clone.querySelectorAll('select');
+    originalSelects.forEach((el,i)=>{ if(clonedSelects[i]) clonedSelects[i].value=el.value; });
+    // Render discount as the entered percentage before replacing inputs.
+    clone.querySelectorAll('td.discount-cell').forEach(cell=>{
+      const val=cell.querySelector('.discountValue')?.value || '0';
+      const span=document.createElement('span');
+      span.textContent=`${val}%`;
+      span.style.cssText='display:block;width:100%;text-align:center;white-space:nowrap;font-size:9px;color:#302b29;';
+      cell.replaceChildren(span);
+      cell.style.display='table-cell';
+    });
+    clone.querySelectorAll('.remove-col,.bottomtools').forEach(el=>el.remove());
+    clone.querySelectorAll('input').forEach(el=>{
+      const span=document.createElement('span'); span.textContent=el.value || '';
+      span.style.cssText='display:block;min-height:1em;padding:3px 0;color:#302b29;';
+      el.replaceWith(span);
+    });
+    clone.querySelectorAll('select').forEach(el=>el.remove());
+    await html2pdf().set(options).from(clone).save();
+  } catch(e) { alert('PDF download ma problem aavi. Internet check kari ne fari try karo.'); }
+}
+function formatLocalDate(d){
+ const dd=String(d.getDate()).padStart(2,'0');
+ const mm=String(d.getMonth()+1).padStart(2,'0');
+ const yyyy=d.getFullYear();
+ return `${dd}/${mm}/${yyyy}`;
+}
+function resetBill(){
+ if(!confirm('Clear this bill and start a new one?'))return;
+ document.getElementById('client').value='';
+ document.getElementById('billdateDisplay').value=formatLocalDate(new Date());
+ tbody.innerHTML=''; for(let i=0;i<8;i++)addRow(); calculate();
+}
+function exportExcel(){
+ if(typeof XLSX==='undefined'){alert('Excel export library could not load. Connect to the internet and reopen this app, then try again.');return}
+ const rows=[
+ ['INFINITY'],['HAIR & TRIM SALON'],[],['SERVICE BILL'],[],
+ ['CLIENT NAME',document.getElementById('client').value,'DATE',document.getElementById('billdateDisplay').value],
+ [],['NO.','SERVICE DESCRIPTION','PRICE (INR)','DISCOUNT (%)','DISCOUNT (INR)','NET (INR)']
+ ];
+ let subtotal=0,totalDiscount=0,total=0;
+ [...tbody.rows].forEach((r,i)=>{const a=rowAmounts(r);subtotal+=a.price;totalDiscount+=a.discount;total+=a.net;rows.push([i+1,r.querySelector('.service').value,a.price,a.val,a.discount,a.net])});
+ rows.push([],['','SUBTOTAL',subtotal],['','TOTAL DISCOUNT',totalDiscount],['','TOTAL AMOUNT',total],[],['THANK YOU FOR CHOOSING INFINITY']);
+ const wb=XLSX.utils.book_new(), ws=XLSX.utils.aoa_to_sheet(rows);
+ ws['!cols']=[{wch:8},{wch:30},{wch:15},{wch:14},{wch:16},{wch:14}];
+ ws['!pageSetup']={paperSize:9,orientation:'landscape',fitToWidth:1,fitToHeight:1};
+ ws['!printArea']='A1:F'+rows.length;
+ XLSX.utils.book_append_sheet(wb,ws,'Client Bill');
+ XLSX.writeFile(wb,'INFINITY_Client_Bill.xlsx');
+}
+document.getElementById('billdateDisplay').value=formatLocalDate(new Date());
+for(let i=0;i<8;i++)addRow();
+</script>
+</body>
+</html>
